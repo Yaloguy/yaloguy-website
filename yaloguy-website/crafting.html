@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crafting Station - YaloGuy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8e44ad 0%, #6c5ce7 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .back-btn {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #ffd93d;
+        }
+        
+        .construction {
+            margin: 2rem 0;
+        }
+        
+        .construction-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .construction-text {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .alt-game-btn {
+            background: #ffd93d;
+            color: #2c3e50;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .alt-game-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="location.href='index.html'">← Back to Menu</button>
+        <h1>Crafting Station 🚧</h1>
+        
+        <div class="construction">
+            <div class="construction-icon">🔨</div>
+            <div class="construction-text">Crafting Station is Under Construction!</div>
+            <div class="construction-text">Coming soon with exciting features!</div>
+        </div>
+
+        <button class="alt-game-btn" onclick="location.href='reaction.html'">⚡ Play Reaction Minigame Instead</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Station - YaloGuy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body { background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); color: white; min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: rgba(255, 255, 255, 0.1); padding: 2rem; border-radius: 20px; backdrop-filter: blur(10px); }
+        h1 { text-align: center; margin-bottom: 2rem; color: #ffd93d; }
+        .back-btn { background: #4ecdc4; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; margin-bottom: 2rem; }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .game-card { background: rgba(255, 255, 255, 0.15); padding: 1.5rem; border-radius: 15px; text-align: center; }
+        .game-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .vote-buttons { display: flex; justify-content: center; gap: 1rem; margin: 1rem 0; }
+        .vote-btn { padding: 8px 20px; border: none; border-radius: 20px; cursor: pointer; }
+        .like-btn { background: #4ecdc4; color: white; }
+        .dislike-btn { background: #2c3e50; color: white; }
+        .votes { font-weight: bold; color: #ffd93d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="location.href='index.html'">← Back to Menu</button>
+        <h1>Voting Station</h1>
+        
+        <div class="game-grid">
+            <!-- Game 1 -->
+            <div class="game-card">
+                <div class="game-icon">⚔️</div>
+                <h3>Arras.io</h3>
+                <div class="vote-buttons">
+                    <button class="vote-btn like-btn" onclick="vote('arras', 'like')">👍 Like</button>
+                    <button class="vote-btn dislike-btn" onclick="vote('arras', 'dislike')">👎 Dislike</button>
+                </div>
+                <div class="votes" id="arras-votes">Votes: 0 (0👍 0👎)</div>
+            </div>
+
+            <!-- Game 2 -->
+            <div class="game-card">
+                <div class="game-icon">🌺</div>
+                <h3>Florr.io</h3>
+                <div class="vote-buttons">
+                    <button class="vote-btn like-btn" onclick="vote('florr', 'like')">👍 Like</button>
+                    <button class="vote-btn dislike-btn" onclick="vote('florr', 'dislike')">👎 Dislike</button>
+                </div>
+                <div class="votes" id="florr-votes">Votes: 0 (0👍 0👎)</div>
+            </div>
+
+            <!-- Game 3 -->
+            <div class="game-card">
+                <div class="game-icon">🧱</div>
+                <h3>Bloxd.io</h3>
+                <div class="vote-buttons">
+                    <button class="vote-btn like-btn" onclick="vote('bloxd', 'like')">👍 Like</button>
+                    <button class="vote-btn dislike-btn" onclick="vote('bloxd', 'dislike')">👎 Dislike</button>
+                </div>
+                <div class="votes" id="bloxd-votes">Votes: 0 (0👍 0👎)</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let votes = {
+            arras: { likes: 0, dislikes: 0 },
+            florr: { likes: 0, dislikes: 0 },
+            bloxd: { likes: 0, dislikes: 0 }
+        };
+
+        // Load saved votes
+        function loadVotes() {
+            const saved = localStorage.getItem('gameVotes');
+            if (saved) {
+                votes = JSON.parse(saved);
+                updateAllDisplays();
+            }
+        }
+
+        // Save votes
+        function saveVotes() {
+            localStorage.setItem('gameVotes', JSON.stringify(votes));
+        }
+
+        // Vote function
+        function vote(game, type) {
+            if (type === 'like') {
+                votes[game].likes++;
+            } else {
+                votes[game].dislikes++;
+            }
+            saveVotes();
+            updateDisplay(game);
+        }
+
+        // Update display
+        function updateDisplay(game) {
+            const total = votes[game].likes + votes[game].dislikes;
+            document.getElementById(`${game}-votes`).textContent = 
+                `Votes: ${total} (${votes[game].likes}👍 ${votes[game].dislikes}👎)`;
+        }
+
+        function updateAllDisplays() {
+            updateDisplay('arras');
+            updateDisplay('florr');
+            updateDisplay('bloxd');
+        }
+
+        // Load on start
+        document.addEventListener('DOMContentLoaded', loadVotes);
+    </script>
+</body>
+</html>

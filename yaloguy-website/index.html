@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YaloGuy - Home</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { text-align: center; background: rgba(255, 255, 255, 0.1); padding: 3rem; border-radius: 20px; backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.2); max-width: 500px; width: 90%; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #ffd93d; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .intro { font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.6; }
+        .button-grid { display: grid; gap: 1rem; margin-top: 2rem; }
+        .main-btn { padding: 15px 30px; font-size: 1.2rem; border: none; border-radius: 50px; cursor: pointer; color: white; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .main-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .vote-btn { background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); }
+        .wiki-btn { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); }
+        .cookie-btn { background: linear-gradient(135deg, #ffd93d 0%, #f9a825 100%); color: #2c3e50; }
+        .reaction-btn { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        .craft-btn { background: linear-gradient(135deg, #6c5ce7 0%, #8e44ad 100%); }
+        footer { position: fixed; bottom: 20px; width: 100%; text-align: center; color: rgba(255,255,255,0.7); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YaloGuy.com</h1>
+        <p class="intro">Hi, this is a website made by Raymond! Welcome to my collection of mini-projects. Choose an option below to get started.</p>
+        
+        <div class="button-grid">
+            <button class="main-btn vote-btn" onclick="location.href='vote.html'">🗳️ Vote Station</button>
+            <button class="main-btn wiki-btn" onclick="location.href='wiki.html'">📖 Community Wiki</button>
+            <button class="main-btn cookie-btn" onclick="location.href='cookie.html'">🍪 Cookie Clicker</button>
+            <button class="main-btn reaction-btn" onclick="location.href='reaction.html'">⚡ Reaction Minigame</button>
+            <button class="main-btn craft-btn" onclick="location.href='crafting.html'">⚒️ Crafting Simulator</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Raymond Guy. Built with creativity!</p>
+    </footer>
+</body>
+</html>

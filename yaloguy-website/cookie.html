@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Clicker - YaloGuy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body { background: linear-gradient(135deg, #ffd93d 0%, #f9a825 100%); color: #2c3e50; min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; text-align: center; }
+        .back-btn { background: #4ecdc4; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; margin-bottom: 2rem; }
+        h1 { margin-bottom: 2rem; }
+        .cookie { width: 200px; height: 200px; background: #8B4513; border-radius: 50%; border: 10px solid #D2691E; cursor: pointer; margin: 0 auto 2rem; transition: transform 0.1s; }
+        .cookie:active { transform: scale(0.95); }
+        .stats { background: rgba(255, 255, 255, 0.9); padding: 1.5rem; border-radius: 15px; margin-bottom: 1rem; }
+        .stat { font-size: 1.2rem; margin: 0.5rem 0; }
+        .upgrades { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .upgrade-btn { background: #4ecdc4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; }
+        .upgrade-btn:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="location.href='index.html'">← Back to Menu</button>
+        <h1>Cookie Clicker 🍪</h1>
+        
+        <div class="cookie" onclick="clickCookie()"></div>
+        
+        <div class="stats">
+            <div class="stat">Cookies: <span id="cookies">0</span></div>
+            <div class="stat">Cookies Per Second: <span id="cps">0</span></div>
+        </div>
+
+        <div class="upgrades">
+            <button class="upgrade-btn" onclick="buyUpgrade('cursor')">
+                Cursor (50 cookies)<br>+0.1 CPS
+            </button>
+            <button class="upgrade-btn" onclick="buyUpgrade('grandma')">
+                Grandma (100 cookies)<br>+1 CPS
+            </button>
+            <button class="upgrade-btn" onclick="buyUpgrade('farm')">
+                Farm (500 cookies)<br>+5 CPS
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let game = {
+            cookies: 0,
+            cps: 0,
+            upgrades: {
+                cursor: { cost: 50, cps: 0.1, owned: 0 },
+                grandma: { cost: 100, cps: 1, owned: 0 },
+                farm: { cost: 500, cps: 5, owned: 0 }
+            }
+        };
+
+        // Load game
+        function loadGame() {
+            const saved = localStorage.getItem('cookieGame');
+            if (saved) {
+                game = JSON.parse(saved);
+                updateDisplay();
+            }
+        }
+
+        // Save game
+        function saveGame() {
+            localStorage.setItem('cookieGame', JSON.stringify(game));
+        }
+
+        // Click cookie
+        function clickCookie() {
+            game.cookies++;
+            updateDisplay();
+            saveGame();
+        }
+
+        // Buy upgrade
+        function buyUpgrade(type) {
+            const upgrade = game.upgrades[type];
+            if (game.cookies >= upgrade.cost) {
+                game.cookies -= upgrade.cost;
+                upgrade.owned++;
+                game.cps += upgrade.cps;
+                upgrade.cost = Math.floor(upgrade.cost * 1.15); // Increase cost
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('cookies').textContent = Math.floor(game.cookies);
+            document.getElementById('cps').textContent = game.cps.toFixed(1);
+            
+            // Update upgrade buttons
+            for (const type in game.upgrades) {
+                const upgrade = game.upgrades[type];
+                const btn = document.querySelector(`.upgrade-btn:nth-child(${Object.keys(game.upgrades).indexOf(type) + 1})`);
+                btn.innerHTML = `${type.charAt(0).toUpperCase() + type.slice(1)} (${Math.floor(upgrade.cost)} cookies)<br>+${upgrade.cps} CPS`;
+                btn.disabled = game.cookies < upgrade.cost;
+            }
+        }
+
+        // Auto cookies
+        setInterval(() => {
+            game.cookies += game.cps / 10;
+            updateDisplay();
+            saveGame();
+        }, 100);
+
+        // Load on start
+        document.addEventListener('DOMContentLoaded', loadGame);
+    </script>
+</body>
+</html>

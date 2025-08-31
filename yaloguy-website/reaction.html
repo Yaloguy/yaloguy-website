@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Minigame - YaloGuy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body { background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); color: white; min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; text-align: center; }
+        .back-btn { background: #4ecdc4; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; margin-bottom: 2rem; }
+        h1 { margin-bottom: 1rem; color: #ffd93d; }
+        
+        /* Game Stats */
+        .stats { background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: 15px; margin-bottom: 1rem; }
+        .stat { font-size: 1.2rem; margin: 0.5rem 0; }
+        
+        /* Game Grid */
+        .game-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin: 2rem 0; }
+        .grid-btn { width: 60px; height: 60px; background: #3498db; border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+        .grid-btn:hover { transform: scale(1.05); }
+        .grid-btn.green { background: #2ecc71; }
+        .grid-btn.red { background: #e74c3c; }
+        .grid-btn:disabled { cursor: not-allowed; }
+        
+        /* Control Buttons */
+        .control-btn { background: #ffd93d; color: #2c3e50; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 1rem; font-size: 1.1rem; }
+        .control-btn:disabled { background: #95a5a6; cursor: not-allowed; }
+        
+        /* Results */
+        .results { background: rgba(255, 255, 255, 0.9); padding: 1.5rem; border-radius: 15px; color: #2c3e50; margin-top: 2rem; }
+        .best-time { font-size: 1.5rem; font-weight: bold; color: #27ae60; }
+        
+        /* Countdown */
+        .countdown { font-size: 5rem; color: #ffd93d; text-shadow: 0 0 20px rgba(255, 217, 61, 0.7); margin: 2rem 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="location.href='index.html'">← Back to Menu</button>
+        <h1>Reaction Minigame ⚡</h1>
+        
+        <div class="stats">
+            <div class="stat">Fastest Time: <span id="best-time">--</span> ms</div>
+            <div class="stat">Current Time: <span id="current-time">--</span> ms</div>
+        </div>
+
+        <div id="countdown" class="countdown" style="display: none;">3</div>
+        
+        <div class="game-grid" id="game-grid">
+            <!-- 5x5 grid of buttons will be generated here -->
+        </div>
+
+        <button class="control-btn" id="start-btn" onclick="startGame()">🎮 Start Game</button>
+        
+        <div class="results" id="results" style="display: none;">
+            <h3>Game Results</h3>
+            <p>Your time: <span id="result-time">0</span> ms</p>
+            <p class="best-time">Best time: <span id="result-best">0</span> ms</p>
+            <button class="control-btn" onclick="startGame()">🔄 Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            isPlaying: false,
+            startTime: 0,
+            bestTime: localStorage.getItem('reactionBestTime') || 9999,
+            currentTime: 0,
+            targetButton: null,
+            countdownActive: false,
+            timeUpdateInterval: null
+        };
+
+        // Initialize game
+        function initGame() {
+            createGrid();
+            updateBestTimeDisplay();
+        }
+
+        // Create 5x5 grid of buttons
+        function createGrid() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 25; i++) {
+                const button = document.createElement('button');
+                button.className = 'grid-btn';
+                button.id = `btn-${i}`;
+                button.disabled = true;
+                button.addEventListener('click', () => handleButtonClick(i));
+                grid.appendChild(button);
+            }
+        }
+
+        // Start the game
+        function startGame() {
+            if (gameState.isPlaying) return;
+            
+            // Reset game
+            resetGame();
+            
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('start-btn').disabled = true;
+            gameState.isPlaying = true;
+            
+            // Start countdown
+            startCountdown();
+        }
+
+        // Reset game state
+        function resetGame() {
+            // Clear any intervals
+            clearInterval(gameState.timeUpdateInterval);
+            
+            // Reset all buttons
+            document.querySelectorAll('.grid-btn').forEach(btn => {
+                btn.className = 'grid-btn';
+                btn.disabled = false;
+            });
+            
+            gameState.startTime = 0;
+            gameState.targetButton = null;
+        }
+
+        // Countdown before game starts
+        function startCountdown() {
+            gameState.countdownActive = true;
+            const countdownEl = document.getElementById('countdown');
+            countdownEl.style.display = 'block';
+            
+            let count = 3;
+            countdownEl.textContent = count;
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                countdownEl.textContent = count;
+                
+                if (count === 0) {
+                    clearInterval(countdownInterval);
+                    countdownEl.style.display = 'none';
+                    startReactionTest();
+                }
+            }, 1000);
+        }
+
+        // Start the reaction test
+        function startReactionTest() {
+            // Reset buttons
+            document.querySelectorAll('.grid-btn').forEach(btn => {
+                btn.className = 'grid-btn';
+                btn.disabled = false;
+            });
+            
+            // Random delay (3-4 seconds)
+            setTimeout(() => {
+                if (!gameState.isPlaying) return;
+                
+                const randomIndex = Math.floor(Math.random() * 25);
+                gameState.targetButton = randomIndex;
+                const targetBtn = document.getElementById(`btn-${randomIndex}`);
+                targetBtn.classList.add('green');
+                
+                gameState.startTime = Date.now();
+                
+                // Update time display
+                gameState.timeUpdateInterval = setInterval(() => {
+                    document.getElementById('current-time').textContent = Date.now() - gameState.startTime;
+                }, 10);
+            }, 3000 + Math.random() * 1000);
+        }
+
+        // Handle button clicks
+        function handleButtonClick(index) {
+            if (!gameState.isPlaying) return;
+            
+            clearInterval(gameState.timeUpdateInterval);
+            const reactionTime = Date.now() - gameState.startTime;
+            
+            // Disable all buttons
+            document.querySelectorAll('.grid-btn').forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            if (index === gameState.targetButton) {
+                // Correct click
+                gameState.currentTime = reactionTime;
+                
+                // Check if new best time
+                if (reactionTime < gameState.bestTime) {
+                    gameState.bestTime = reactionTime;
+                    localStorage.setItem('reactionBestTime', reactionTime);
+                    updateBestTimeDisplay();
+                }
+                
+                showResults(reactionTime, true);
+            } else {
+                // Wrong click
+                document.getElementById(`btn-${index}`).classList.add('red');
+                showResults(0, false);
+            }
+            
+            gameState.isPlaying = false;
+        }
+
+        // Show results
+        function showResults(time, isSuccess) {
+            document.getElementById('results').style.display = 'block';
+            
+            if (isSuccess) {
+                document.getElementById('result-time').textContent = time;
+                document.getElementById('result-best').textContent = gameState.bestTime;
+            } else {
+                document.getElementById('result-time').textContent = 'WRONG CLICK!';
+            }
+            
+            document.getElementById('start-btn').disabled = false;
+        }
+
+        // Update best time display
+        function updateBestTimeDisplay() {
+            document.getElementById('best-time').textContent = gameState.bestTime === 9999 ? '--' : gameState.bestTime;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
